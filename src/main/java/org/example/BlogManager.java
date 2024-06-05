@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
+import org.bson.types.ObjectId;
 
 import javax.print.Doc;
 import java.time.Instant;
@@ -14,8 +15,8 @@ import java.util.logging.Filter;
 
 public class BlogManager {
     MongoCollection<Document> collection;
-    public BlogManager(MongoCollection<Document> collection){
-        this.collection = collection;
+    public BlogManager(String collection){
+        this.collection = new DBConnection().getCollection(collection);
     }
 
     public void addPost(String title, String content, List<String> tags, String category){
@@ -28,11 +29,18 @@ public class BlogManager {
         collection.insertOne(post);
     }
 
-    public ArrayList<Document> getPosts(){
-        ArrayList<Document> posts = new ArrayList<>();
+    public ArrayList<Blog> getPosts(){
+        ArrayList<Blog> posts = new ArrayList<>();
         try (MongoCursor<Document> cursor = collection.find().iterator()){
             while (cursor.hasNext()){
-                posts.add(cursor.next());
+                Document doc = cursor.next();
+                ObjectId id = doc.getObjectId("_id");
+                String title = doc.getString("title");
+                String content = doc.getString("content");
+                List<String> tags = doc.getList("tags", String.class);
+                String category = doc.getString("category");
+                Instant timestamp = Instant.parse(doc.getString("timestamp"));
+                posts.add(new Blog(id.toHexString(), title, content, tags, category, timestamp));
             }
         }
         return posts;

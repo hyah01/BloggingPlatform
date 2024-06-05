@@ -15,8 +15,8 @@ public class TestBlogManger {
 
     @Test
     public void TestAddPost(){
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Test Title";
         String postContent = "Test Content";
         List<String> tags = Arrays.asList("test", "blog");
@@ -24,7 +24,7 @@ public class TestBlogManger {
 
         blogManager.addPost(title, postContent, tags, category);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title",title);
         Document post = collection.find(query).first();
 
@@ -34,12 +34,12 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
     @Test
     public void TestAddPostWithEmptyTags(){
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Empty Tags Test";
         String postContent = "Testing with empty tags";
         List<String> tags = new ArrayList<>();
@@ -47,7 +47,7 @@ public class TestBlogManger {
 
         blogManager.addPost(title, postContent, tags, category);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title",title);
         Document post = collection.find(query).first();
 
@@ -57,12 +57,12 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
     @Test
     public void TestAddPostWithLongTitleAndContent(){
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Very Long Title ".repeat(1000); // 12000 characters
         String postContent = "Very Long Content ".repeat(1000); // 14000 characters
         List<String> tags = Arrays.asList("long", "content");
@@ -70,7 +70,7 @@ public class TestBlogManger {
 
         blogManager.addPost(title, postContent, tags, category);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title",title);
         Document post = collection.find(query).first();
 
@@ -80,12 +80,12 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
     @Test
     public void testAddPostWithSpecialCharactersInCategory(){
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Special Characters Test";
         String postContent = "Testing with special characters in category";
         List<String> tags = Arrays.asList("special", "characters");
@@ -93,7 +93,7 @@ public class TestBlogManger {
 
         blogManager.addPost(title, postContent, tags, category);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title",title);
         Document post = collection.find(query).first();
 
@@ -103,12 +103,12 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
     @Test
     public void testAddPostWithLargeNumberOfTags(){
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Large Number of Tags Test";
         String postContent = "Testing with a large number of tags";
         List<String> tags = new ArrayList<>();
@@ -119,7 +119,7 @@ public class TestBlogManger {
 
         blogManager.addPost(title, postContent, tags, category);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title",title);
         Document post = collection.find(query).first();
 
@@ -129,28 +129,28 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
 
     @Test
     public void testReturnsAllPosts() {
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
 
         // Add multiple posts
         blogManager.addPost("Title1", "Content1", Arrays.asList("tag1"), "Category1");
         blogManager.addPost("Title2", "Content2", Arrays.asList("tag2"), "Category2");
 
-        ArrayList<Document> posts = blogManager.getPosts();
+        ArrayList<Blog> posts = blogManager.getPosts();
         assertEquals(2, posts.size());
         // Delete all documents from the collection
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
 
     @Test
     public void test_successfully_updates_post() {
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
         String title = "Original Title";
         String postContent = "Original Content";
         List<String> tags = Arrays.asList("original", "blog");
@@ -165,7 +165,7 @@ public class TestBlogManger {
 
         blogManager.editPost(title, newTitle, newContent, newTags, newCategory);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
         Document query = new Document("title", newTitle);
         Document post = collection.find(query).first();
 
@@ -174,12 +174,12 @@ public class TestBlogManger {
         assertEquals(newContent, post.getString("content"));
         assertEquals(newTags, post.getList("tags", String.class));
         assertEquals(newCategory, post.getString("category"));
-        dbConnection.getCollection().deleteMany(new Document());
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
     @Test
     public void test_post_does_not_exist() {
-        DBConnection dbConnection = new DBConnection("BlogTest");
-        BlogManager blogManager = new BlogManager(dbConnection.getCollection());
+        DBConnection dbConnection = new DBConnection();
+        blogManager = new BlogManager("BlogTest");
 
         String nonExistentTitle = "Non Existent Title";
         String newTitle = "New Title";
@@ -189,10 +189,12 @@ public class TestBlogManger {
 
         blogManager.editPost(nonExistentTitle, newTitle, newContent, newTags, newCategory);
 
-        MongoCollection<Document> collection = dbConnection.getCollection();
+        MongoCollection<Document> collection = dbConnection.getCollection("BlogTest");
+
         Document query = new Document("title", newTitle);
         Document post = collection.find(query).first();
 
         assertNull(post);
+        dbConnection.getCollection("BlogTest").deleteMany(new Document());
     }
 }
