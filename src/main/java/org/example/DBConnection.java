@@ -12,18 +12,16 @@ public class DBConnection {
     private final String DBNAME = "BlogDB";
     private MongoClient mongoClient;
     private MongoDatabase database;
-    private MongoCollection<Document> collection;
 
     // return a connection for other classes to utilize
-    public DBConnection(String DBCOLLECTION) {
+    public DBConnection() {
         mongoClient = MongoClients.create(CONNECTIONSTRING);
         database = mongoClient.getDatabase(DBNAME);
-        collection = database.getCollection(DBCOLLECTION);
 
     }
 
-    public MongoCollection<Document> getCollection() {
-        return collection;
+    public MongoCollection<Document> getCollection(String DBCOLLECTION) {
+        return database.getCollection(DBCOLLECTION);
     }
 
     public void close(){
