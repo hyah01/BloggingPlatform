@@ -3,11 +3,13 @@ package org.example;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import org.bson.Document;
+import com.mongodb.client.model.Filters;
 
 import javax.print.Doc;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Filter;
 
 
 public class BlogManager {
@@ -36,5 +38,10 @@ public class BlogManager {
         return posts;
     }
 
-
+    public void editPost(String postTitle, String newTitle, String newContent, List<String> newTags, String newCategory){
+        collection.updateOne(Filters.eq("title",postTitle), new Document("$set", new Document("title",newTitle)
+                .append("content", newContent)
+                .append("tags", newTags)
+                .append("category", newCategory)));
+    }
 }

@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestBlogManger {
     private BlogManager blogManager;
@@ -35,6 +34,7 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+        dbConnection.getCollection().deleteMany(new Document());
     }
     @Test
     public void TestAddPostWithEmptyTags(){
@@ -57,6 +57,7 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+        dbConnection.getCollection().deleteMany(new Document());
     }
     @Test
     public void TestAddPostWithLongTitleAndContent(){
@@ -79,6 +80,7 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+        dbConnection.getCollection().deleteMany(new Document());
     }
     @Test
     public void testAddPostWithSpecialCharactersInCategory(){
@@ -101,6 +103,7 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+        dbConnection.getCollection().deleteMany(new Document());
     }
     @Test
     public void testAddPostWithLargeNumberOfTags(){
@@ -126,11 +129,12 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+        dbConnection.getCollection().deleteMany(new Document());
     }
 
     @Test
     public void testReturnsAllPosts() {
-        DBConnection dbConnection = new DBConnection("BlogTestGet");
+        DBConnection dbConnection = new DBConnection("BlogTest");
         blogManager = new BlogManager(dbConnection.getCollection());
 
         // Add multiple posts
@@ -141,5 +145,54 @@ public class TestBlogManger {
         assertEquals(2, posts.size());
         // Delete all documents from the collection
         dbConnection.getCollection().deleteMany(new Document());
+    }
+
+    @Test
+    public void test_successfully_updates_post() {
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
+        String title = "Original Title";
+        String postContent = "Original Content";
+        List<String> tags = Arrays.asList("original", "blog");
+        String category = "Original";
+
+        blogManager.addPost(title, postContent, tags, category);
+
+        String newTitle = "Updated Title";
+        String newContent = "Updated Content";
+        List<String> newTags = Arrays.asList("updated", "blog");
+        String newCategory = "Updated";
+
+        blogManager.editPost(title, newTitle, newContent, newTags, newCategory);
+
+        MongoCollection<Document> collection = dbConnection.getCollection();
+        Document query = new Document("title", newTitle);
+        Document post = collection.find(query).first();
+
+        assertNotNull(post);
+        assertEquals(newTitle, post.getString("title"));
+        assertEquals(newContent, post.getString("content"));
+        assertEquals(newTags, post.getList("tags", String.class));
+        assertEquals(newCategory, post.getString("category"));
+        dbConnection.getCollection().deleteMany(new Document());
+    }
+    @Test
+    public void test_post_does_not_exist() {
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        BlogManager blogManager = new BlogManager(dbConnection.getCollection());
+
+        String nonExistentTitle = "Non Existent Title";
+        String newTitle = "New Title";
+        String newContent = "New Content";
+        List<String> newTags = Arrays.asList("new", "blog");
+        String newCategory = "New";
+
+        blogManager.editPost(nonExistentTitle, newTitle, newContent, newTags, newCategory);
+
+        MongoCollection<Document> collection = dbConnection.getCollection();
+        Document query = new Document("title", newTitle);
+        Document post = collection.find(query).first();
+
+        assertNull(post);
     }
 }
