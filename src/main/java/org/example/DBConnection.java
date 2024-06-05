@@ -10,13 +10,12 @@ import org.bson.Document;
 public class DBConnection {
     private final String CONNECTIONSTRING = "mongodb://localhost:27017";
     private final String DBNAME = "BlogDB";
-    private final String DBCOLLECTION = "Blogs";
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> collection;
 
     // return a connection for other classes to utilize
-    public DBConnection() {
+    public DBConnection(String DBCOLLECTION) {
         mongoClient = MongoClients.create(CONNECTIONSTRING);
         database = mongoClient.getDatabase(DBNAME);
         collection = database.getCollection(DBCOLLECTION);

@@ -3,37 +3,21 @@ package org.example;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestBlogManger {
     private BlogManager blogManager;
-    private static DBConnection dbConnection;
 
-    @AfterAll
-    public static void tearDownAfterClass() {
-        if (dbConnection != null) {
-            dbConnection.close();
-        }
-    }
-    @BeforeEach
-    public void setUp() {
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
-    }
     @Test
     public void TestAddPost(){
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
         String title = "Test Title";
         String postContent = "Test Content";
         List<String> tags = Arrays.asList("test", "blog");
@@ -54,8 +38,8 @@ public class TestBlogManger {
     }
     @Test
     public void TestAddPostWithEmptyTags(){
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
         String title = "Empty Tags Test";
         String postContent = "Testing with empty tags";
         List<String> tags = new ArrayList<>();
@@ -76,8 +60,8 @@ public class TestBlogManger {
     }
     @Test
     public void TestAddPostWithLongTitleAndContent(){
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
         String title = "Very Long Title ".repeat(1000); // 12000 characters
         String postContent = "Very Long Content ".repeat(1000); // 14000 characters
         List<String> tags = Arrays.asList("long", "content");
@@ -98,8 +82,8 @@ public class TestBlogManger {
     }
     @Test
     public void testAddPostWithSpecialCharactersInCategory(){
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
         String title = "Special Characters Test";
         String postContent = "Testing with special characters in category";
         List<String> tags = Arrays.asList("special", "characters");
@@ -120,8 +104,8 @@ public class TestBlogManger {
     }
     @Test
     public void testAddPostWithLargeNumberOfTags(){
-        dbConnection = new DBConnection();
-        blogManager = new BlogManager();
+        DBConnection dbConnection = new DBConnection("BlogTest");
+        blogManager = new BlogManager(dbConnection.getCollection());
         String title = "Large Number of Tags Test";
         String postContent = "Testing with a large number of tags";
         List<String> tags = new ArrayList<>();
@@ -142,5 +126,20 @@ public class TestBlogManger {
         assertEquals(category, post.getString("category"));
         assertEquals((Integer)0,post.getInteger("likes"));
         assertTrue(Instant.parse(post.getString("timestamp")).isBefore(Instant.now()));
+    }
+
+    @Test
+    public void testReturnsAllPosts() {
+        DBConnection dbConnection = new DBConnection("BlogTestGet");
+        blogManager = new BlogManager(dbConnection.getCollection());
+
+        // Add multiple posts
+        blogManager.addPost("Title1", "Content1", Arrays.asList("tag1"), "Category1");
+        blogManager.addPost("Title2", "Content2", Arrays.asList("tag2"), "Category2");
+
+        ArrayList<Document> posts = blogManager.getPosts();
+        assertEquals(2, posts.size());
+        // Delete all documents from the collection
+        dbConnection.getCollection().deleteMany(new Document());
     }
 }
