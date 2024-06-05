@@ -46,6 +46,18 @@ public class BlogManager {
         return posts;
     }
 
+    public Blog viewPost(String title){
+        Document query = new Document("title",title);
+        Document post = collection.find(query).first();
+        ObjectId id = post.getObjectId("_id");
+        String postTitle = post.getString("title");
+        String content = post.getString("content");
+        List<String> tags = post.getList("tags", String.class);
+        String category = post.getString("category");
+        Instant timestamp = Instant.parse(post.getString("timestamp"));
+        return (new Blog(id.toHexString(), postTitle, content, tags, category, timestamp));
+    }
+
     public void editPost(String postTitle, String newTitle, String newContent, List<String> newTags, String newCategory){
         collection.updateOne(Filters.eq("title",postTitle), new Document("$set", new Document("title",newTitle)
                 .append("content", newContent)

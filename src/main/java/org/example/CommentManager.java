@@ -22,8 +22,8 @@ public class CommentManager {
         collection.insertOne(commentDoc);
     }
 
-    public List<Comment> getCommentsForPost(String postId) {
-        List<Comment> comments = new ArrayList<>();
+    public ArrayList<Comment> getCommentsForPost(String postId) {
+        ArrayList<Comment> comments = new ArrayList<>();
         collection.find(new Document("postId", postId)).iterator().forEachRemaining(doc -> {
             String content = doc.getString("content");
             String author = doc.getString("author");
