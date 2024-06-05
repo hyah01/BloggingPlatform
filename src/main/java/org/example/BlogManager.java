@@ -47,15 +47,26 @@ public class BlogManager {
     }
 
     public Blog viewPost(String title){
-        Document query = new Document("title",title);
-        Document post = collection.find(query).first();
-        ObjectId id = post.getObjectId("_id");
-        String postTitle = post.getString("title");
-        String content = post.getString("content");
-        List<String> tags = post.getList("tags", String.class);
-        String category = post.getString("category");
-        Instant timestamp = Instant.parse(post.getString("timestamp"));
-        return (new Blog(id.toHexString(), postTitle, content, tags, category, timestamp));
+        try {
+            Document query = new Document("title", title);
+            Document post = collection.find(query).first();
+
+            if (post == null) {
+                System.out.println("No Post of that title");
+                return null;
+            }
+
+            ObjectId id = post.getObjectId("_id");
+            String postTitle = post.getString("title");
+            String content = post.getString("content");
+            List<String> tags = post.getList("tags", String.class);
+            String category = post.getString("category");
+            Instant timestamp = Instant.parse(post.getString("timestamp"));
+            return new Blog(id.toHexString(), postTitle, content, tags, category, timestamp);
+        } catch (Exception e) {
+            // Handle any other exceptions that may occur
+            throw new RuntimeException("Error occurred while retrieving post", e);
+        }
     }
 
     public void editPost(String postTitle, String newTitle, String newContent, List<String> newTags, String newCategory){
@@ -64,4 +75,13 @@ public class BlogManager {
                 .append("tags", newTags)
                 .append("category", newCategory)));
     }
+
+    public void deletePost(String title) {
+        collection.deleteOne(new Document("title", title));
+    }
+
+    public void deletePostID(String postId) {
+        collection.deleteOne(new Document("_id", new ObjectId(postId)));
+    }
+
 }
