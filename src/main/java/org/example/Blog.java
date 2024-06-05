@@ -46,12 +46,35 @@ public class Blog {
 
     @Override
     public String toString() {
-        return "Blog{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", tags=" + tags +
-                ", category='" + category + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%-50s\n", "Blog"));
+        sb.append("--------------------------------------------------\n");
+        sb.append(String.format("Title: %s\n", title));
+        sb.append("--------------------------------------------------\n");
+        sb.append("Content:\n");
+        sb.append(wrapText(content, 50));
+        sb.append("--------------------------------------------------\n");
+        sb.append(String.format("Tags: %s\n", tags));
+        sb.append("--------------------------------------------------\n");
+        sb.append(String.format("Category: %s\n", category));
+        sb.append("--------------------------------------------------\n");
+        sb.append(String.format("Timestamp: %s\n", timestamp));
+        return sb.toString();
+    }
+    private String wrapText(String text, int maxLength) {
+        StringBuilder result = new StringBuilder();
+        int index = 0;
+        while (index < text.length()) {
+            int endIndex = Math.min(index + maxLength, text.length());
+            if (endIndex < text.length() && !Character.isWhitespace(text.charAt(endIndex))) {
+                // If the character at the end index is not whitespace, find the last whitespace character before it
+                while (endIndex > index && !Character.isWhitespace(text.charAt(endIndex))) {
+                    endIndex--;
+                }
+            }
+            result.append(String.format("%-50s\n", text.substring(index, endIndex)));
+            index = endIndex;
+        }
+        return result.toString();
     }
 }

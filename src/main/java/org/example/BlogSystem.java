@@ -112,6 +112,8 @@ public class BlogSystem {
     }
 
     private static void DeleteThisPost(Blog blog) {
+        System.out.println("\n--== Currently Deleting Comments ==--");
+
 
     }
 
