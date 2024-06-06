@@ -46,6 +46,8 @@ public class BlogSystem {
     }
 
     private static void deletePost() {
+        System.out.println("\n--== Currently Deleting Comments ==--");
+        System.out.println("Are you sure you want to delete this post? all the comments will be deleted also. ( Y / N )");
     }
 
     private static void editPost() {
@@ -113,7 +115,12 @@ public class BlogSystem {
 
     private static void DeleteThisPost(Blog blog) {
         System.out.println("\n--== Currently Deleting Comments ==--");
-
+        System.out.println("Are you sure you want to delete this post? all the comments will be deleted also. ( Y / N )");
+        String input = scanner.nextLine();
+        if (input.equals("Y")){
+            blogManager.deletePost(blog.getTitle());
+            commentManager.deleteComments(blog.getId());
+        }
 
     }
 

@@ -32,4 +32,8 @@ public class CommentManager {
         });
         return comments;
     }
+
+    public void deleteComments(String postId){
+        collection.deleteMany(new Document("postID",postId));
+    }
 }

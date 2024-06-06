@@ -30,14 +30,14 @@ public class Comment {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-50s\n", "Comment"));
-        sb.append("--------------------------------------------------\n");
-        sb.append("Content:\n");
+        sb.append("╔═══════════════════════════════════════════════════╗\n");
+        sb.append(String.format("║ %-49s ║\n", "Comment"));
+        sb.append("╠═══════════════════════════════════════════════════╣\n");
+        sb.append("║ Content:                                          ║\n");
         sb.append(wrapText(content, 50));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Author: %s\n", author));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Timestamp: %s\n", timestamp));
+        sb.append(String.format("║ %-49s ║\n", "Author: " + author));
+        sb.append(String.format("║ %-49s ║\n", "Timestamp: " + timestamp));
+        sb.append("╚═══════════════════════════════════════════════════╝");
         return sb.toString();
     }
 
@@ -52,7 +52,7 @@ public class Comment {
                     endIndex--;
                 }
             }
-            result.append(String.format("%-50s\n", text.substring(index, endIndex)));
+            result.append("║ " + String.format("%-49s", text.substring(index, endIndex)) + " ║\n");
             index = endIndex;
         }
         return result.toString();

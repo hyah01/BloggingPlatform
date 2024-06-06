@@ -47,18 +47,17 @@ public class Blog {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-50s\n", "Blog"));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Title: %s\n", title));
-        sb.append("--------------------------------------------------\n");
-        sb.append("Content:\n");
+        sb.append("╔═══════════════════════════════════════════════════╗\n");
+        sb.append(String.format("║ %-49s ║\n", "Blog"));
+        sb.append("╠═══════════════════════════════════════════════════╣\n");
+        sb.append(String.format("║ %-49s ║\n", "Title: " + title));
+        sb.append("╠═══════════════════════════════════════════════════╣\n");
+        sb.append("║ Content:                                          ║\n");
         sb.append(wrapText(content, 50));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Tags: %s\n", tags));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Category: %s\n", category));
-        sb.append("--------------------------------------------------\n");
-        sb.append(String.format("Timestamp: %s\n", timestamp));
+        sb.append(String.format("║ %-49s ║\n", "Tags: " + tags));
+        sb.append(String.format("║ %-49s ║\n", "Category: " + category));
+        sb.append(String.format("║ %-49s ║\n", "Timestamp: " + timestamp));
+        sb.append("╚═══════════════════════════════════════════════════╝");
         return sb.toString();
     }
     private String wrapText(String text, int maxLength) {
@@ -72,7 +71,7 @@ public class Blog {
                     endIndex--;
                 }
             }
-            result.append(String.format("%-50s\n", text.substring(index, endIndex)));
+            result.append("║ " + String.format("%-49s", text.substring(index, endIndex)) + " ║\n");
             index = endIndex;
         }
         return result.toString();
