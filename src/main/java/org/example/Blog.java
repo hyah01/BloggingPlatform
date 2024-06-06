@@ -1,7 +1,6 @@
 package org.example;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Blog {
@@ -12,6 +11,7 @@ public class Blog {
     private String category;
     private Instant timestamp;
 
+    // Object that store each blog
     public Blog(String id, String title, String content, List<String> tags, String category, Instant timestamp) {
         this.id = id;
         this.title = title;
@@ -45,6 +45,7 @@ public class Blog {
         return timestamp;
     }
 
+    // Using String Builder to make it look nice
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

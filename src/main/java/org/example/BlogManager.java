@@ -6,19 +6,19 @@ import org.bson.Document;
 import com.mongodb.client.model.Filters;
 import org.bson.types.ObjectId;
 
-import javax.print.Doc;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Filter;
 
 
 public class BlogManager {
+    // Initializing collection for easy access
     MongoCollection<Document> collection;
     public BlogManager(String collection){
         this.collection = new DBConnection().getCollection(collection);
     }
 
+    // Add post using title, content, tags, category, likes,timestamp
     public void addPost(String title, String content, List<String> tags, String category){
         Document post = new Document("title",title)
                 .append("content", content)
@@ -29,8 +29,10 @@ public class BlogManager {
         collection.insertOne(post);
     }
 
+    // Retrieve posts from database
     public ArrayList<Blog> getPosts(){
         ArrayList<Blog> posts = new ArrayList<>();
+        // Integrate through the database and get all blogs
         try (MongoCursor<Document> cursor = collection.find().iterator()){
             while (cursor.hasNext()){
                 Document doc = cursor.next();
@@ -46,11 +48,13 @@ public class BlogManager {
         return posts;
     }
 
+    // View A post from database using the title filter
     public Blog viewPost(String title){
         try {
             Document query = new Document("title", title);
             Document post = collection.find(query).first();
 
+            // If the post isn't there, return null
             if (post == null) {
                 System.out.println("No Post of that title");
                 return null;
