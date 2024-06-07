@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BlogSystem {
+    // Connect db
     private static final Scanner scanner = new Scanner(System.in);
     private static final DBConnection dbConnection = new DBConnection();
     private static final CommentManager commentManager = new CommentManager("Comment");
@@ -15,7 +16,9 @@ public class BlogSystem {
         menu();
     }
 
+    // give visual to a menu for user to interact with
     private static void menu(){
+        // continuously prompt user what they can do after they picked an option
         while(true){
             try {
                 while (true){
@@ -46,9 +49,11 @@ public class BlogSystem {
         }
     }
 
+    // delete a post based on the title
     private static void deletePost() {
         System.out.println("\n--== Currently Deleting Comments ==--");
         System.out.println("Enter the post title that you want to delete");
+        // Get the exact blog they want to delete
         Blog blog = blogManager.viewPost(scanner.nextLine());
         if (blog != null){
             System.out.println("Are you sure you want to delete this post? all the comments will be deleted also. ( Y / N )");
@@ -62,6 +67,7 @@ public class BlogSystem {
 
     }
 
+    // edit the post based on which part of the post they want to edit
     private static void editPost() {
         System.out.println("\n--== Currently Editing Comments ==--");
         System.out.println("Enter the post title that you want to edit");
@@ -89,7 +95,7 @@ public class BlogSystem {
                     System.out.println("Try 1-5");
                     throw new RuntimeException(e);
                 }
-
+                // They don't have to edit all the category and everything else will be the same
                 switch (input){
                     case 1:
                         System.out.println("Enter Post new Title:");
@@ -117,6 +123,7 @@ public class BlogSystem {
         }
     }
 
+    // add a new post
     private static void addPost() {
         System.out.println("\n--== Currently Adding a Post ==--");
         System.out.println("Enter Post Title:");
@@ -131,6 +138,7 @@ public class BlogSystem {
         System.out.println("Post added successfully");
     }
 
+    // allows user to view the post and post comments to delete this exact post
     private static void viewPost() {
         System.out.println("\n--== Currently Viewing Post ==--");
         System.out.println("Enter Post Title to view Post:");
@@ -183,10 +191,12 @@ public class BlogSystem {
         }
     }
 
+    // sub category method that delete a specific post after being viewed
     private static void DeleteThisPost(Blog blog) {
         System.out.println("\n--== Currently Deleting Comments ==--");
         System.out.println("Are you sure you want to delete this post? all the comments will be deleted also. ( Y / N )");
         String input = scanner.nextLine();
+        // make sure they want to delete it
         if (input.equals("Y")){
             blogManager.deletePostID(blog.getId());
             commentManager.deleteComments(blog.getId());
@@ -194,6 +204,7 @@ public class BlogSystem {
 
     }
 
+    // add comment to the current blog
     private static void addComents(Blog blog) {
         System.out.println("\n--== Currently Adding Comments ==--");
         System.out.println("For: " + blog.getTitle());
@@ -205,15 +216,17 @@ public class BlogSystem {
         System.out.println("Comment added successfully");
     }
 
+    // this print out all the comments for that post
     private static void viewComments(Blog blog) {
         System.out.println("\n--== Currently Viewing Comments ==--");
         System.out.println("For: " + blog.getTitle());
-        ArrayList<Comment> comments = commentManager.getCommentsForPost(blog.getId());
+        ArrayList<Comment> comments = commentManager.getCommentsForPost(blog.getId()); // works by storing post id to the comments itself
         for (Comment comment: comments){
             System.out.println(comment);
         }
     }
 
+    // view all posts
     private static void viewAllPosts() {
         ArrayList<Blog> blogs = blogManager.getPosts();
         System.out.println("\n--== Currently Viewing Posts ==--");

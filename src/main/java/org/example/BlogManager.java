@@ -73,6 +73,7 @@ public class BlogManager {
         }
     }
 
+    // Allows for post editing of all rows
     public void editPost(String postTitle, String newTitle, String newContent, List<String> newTags, String newCategory){
         collection.updateOne(Filters.eq("title",postTitle), new Document("$set", new Document("title",newTitle)
                 .append("content", newContent)
@@ -80,10 +81,12 @@ public class BlogManager {
                 .append("category", newCategory)));
     }
 
+    // Deleting post by title
     public void deletePost(String title) {
         collection.deleteOne(new Document("title", title));
     }
 
+    // Deleting post by Id
     public void deletePostID(String postId) {
         collection.deleteOne(new Document("_id", new ObjectId(postId)));
     }

@@ -3,6 +3,7 @@ package org.example;
 import java.time.Instant;
 
 public class Comment {
+    // initialize variables
     private String content;
     private String author;
     private Instant timestamp;
@@ -41,6 +42,7 @@ public class Comment {
         return sb.toString();
     }
 
+    // this wrap the comment for better visual
     private String wrapText(String text, int maxLength) {
         StringBuilder result = new StringBuilder();
         int index = 0;
